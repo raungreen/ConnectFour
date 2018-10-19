@@ -14,11 +14,11 @@ function reportWin(rowNum,colNum) {
 }
 //change color of a button
 function changeColor(rowIndex,colIndex,color){
-  return table.eg(rowIndex).find('td').eg(colIndex).find('button').css('background-color',color);
+  return table.eq(rowIndex).find('td').eq(colIndex).find('button').css('background-color',color);
 }
 // report back to current color of a button
 function returnColor(rowIndex,colIndex){
-  return table.eg(rowIndex).find('td').eg(colIndex).find('button').css('background-color');
+  return table.eq(rowIndex).find('td').eq(colIndex).find('button').css('background-color');
 }
 //take in column index, returns the bottom row that is still gray
 function checkBottom(colIndex){
@@ -32,7 +32,7 @@ function checkBottom(colIndex){
 }
 //check to see if 4 inputs are the same color
 function colorMatchCheck(one,two,three,four){
-  return (one === two && one === three && one === four && one !== 'rgb(128, 128, 128)')
+  return (one === two && one === three && one === four && one !== 'rgb(128, 128, 128)' && one !== undefined);
 }
 
 // Check for Horizontal Wins
@@ -65,7 +65,7 @@ function verticalWinCheck() {
 }
 //check for diagonal Wins
 function diagonalWinCheck() {
-  for (var col = 0;) col < 5; col++) {
+  for (var col = 0; col < 5; col++) {
     for (var row = 0; row < 7; row++) {
       if (colorMatchCheck(returnColor(row,col), returnColor(row+2,col+2), returnColor(row+3,col+3))) {
         console.log('diag');
@@ -85,8 +85,8 @@ function diagonalWinCheck() {
 function gameEnd(winningPlayer) {
   for (var col = 0; col < 7; col++) {
     for (var row = 0; row < 7; row++) {
-      $('h3').fadeout('fast');
-      $('h2').fadeout('fast');
+      $('h3').fadeOut('fast');
+      $('h2').fadeOut('fast');
       $('h1').text(winningPlayer+" has won!  Refresh you browser to play again!").css("fontSize", "50px")
     }
   }
@@ -113,6 +113,7 @@ $('.board button').on('click',function() {
   //check for a win or a tie.
   if (horizontalWinCheck() || verticalWinCheck() || diagonalWinCheck()) {
     gameEnd(currentName);
+}
 
   //if no win or tie, continue to next player
   currentPlayer = currentPlayer * -1 ;
@@ -127,4 +128,4 @@ $('.board button').on('click',function() {
     $('h3').text(currentName+": it is your turn, please pick a column to drop your red chip.");
     currentColor = player2Color;
   }
-}
+})

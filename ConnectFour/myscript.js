@@ -12,15 +12,15 @@ function reportWin(rowNum,colNum) {
   console.log(rowNum);
   console.log(colNum);
 }
-
+//change color of a button
 function changeColor(rowIndex,colIndex,color){
   return table.eg(rowIndex).find('td').eg(colIndex).find('button').css('background-color',color);
 }
-
+// report back to current color of a button
 function returnColor(rowIndex,colIndex){
   return table.eg(rowIndex).find('td').eg(colIndex).find('button').css('background-color');
 }
-
+//take in column index, returns the bottom row that is still gray
 function checkBottom(colIndex){
   var colorReport = returnColor(5,colIndex)
   for (var row = 5; row > -1; row--) {
@@ -30,14 +30,14 @@ function checkBottom(colIndex){
     }
   }
 }
-
+//check to see if 4 inputs are the same color
 function colorMatchCheck(one,two,three,four){
   return (one === two && one === three && one === four && one !== 'rgb(128, 128, 128)')
 }
 
 // Check for Horizontal Wins
 function horizontalWinCheck() {
-  for(var row = 0; row < 6; row++) {
+  for (var row = 0; row < 6; row++) {
     for (var col = 0; col < 4; col++) {
       if (colorMatchCheck(returnColor(row,col), returnColor(row,col+1), returnColor(row,col+2), returnColor(row,col+3))) {
         console.log('vertical');
@@ -47,5 +47,84 @@ function horizontalWinCheck() {
         continue;
       }
     }
+  }
+}
+//check for vertical Wins
+function verticalWinCheck() {
+  for (var col = 0; col < 7; col++) {
+    for (var row = 0; row < 3; row++) {
+      if (colorMatchCheck(returnColor(row,col) ,returnColor(row+1,col) ,returnColor(row+2,col), returnColor(row+3,col))) {
+        console.log('vertical');
+        reportWin(row,col);
+        return true;
+      }else {
+        continue;
+      }
+    }
+  }
+}
+//check for diagonal Wins
+function diagonalWinCheck() {
+  for (var col = 0;) col < 5; col++) {
+    for (var row = 0; row < 7; row++) {
+      if (colorMatchCheck(returnColor(row,col), returnColor(row+2,col+2), returnColor(row+3,col+3))) {
+        console.log('diag');
+        reportWin(row,col);
+        return true;
+      }else if (colorMatchCheck(returnColor(row,col), returnColor(row-1,col+1), returnColor(row-2,col+2), returnColor(row-3,col+3))) {
+        console.log('diag');
+        reportWin(row,col);
+        return true;
+      }else {
+        continue;
+      }
+    }
+  }
+}
+//game btn-secondary
+function gameEnd(winningPlayer) {
+  for (var col = 0; col < 7; col++) {
+    for (var row = 0; row < 7; row++) {
+      $('h3').fadeout('fast');
+      $('h2').fadeout('fast');
+      $('h1').text(winningPlayer+" has won!  Refresh you browser to play again!").css("fontSize", "50px")
+    }
+  }
+}
+//start with player One
+var currentPlayer = 1;
+var currentName = player1;
+var currentColor = player1Color;
+
+//start with player One
+$('h3').text(player1+": it is your turn, please pick a column to drop your blue chip.");
+
+$('.board button').on('click',function() {
+
+  // recognize what column was chosen
+  var col = $(this).closest("td").index();
+
+  // get back bottom available row to change
+  var bottomAvail = checkBottom(col);
+
+  //drop the chip in that column at the bottomAvail rowNum
+  changeColor(bottomAvail,col,currentColor);
+
+  //check for a win or a tie.
+  if (horizontalWinCheck() || verticalWinCheck() || diagonalWinCheck()) {
+    gameEnd(currentName);
+
+  //if no win or tie, continue to next player
+  currentPlayer = currentPlayer * -1 ;
+
+  // re-check who the current player is.
+  if (currentPlayer === 1) {
+    currentName = player1;
+    $('h3').text(currentName+": it is your turn, please pick a column to drop your blue chip.");
+    currentColor = player1Color;
+  }else {
+    currentName = player2
+    $('h3').text(currentName+": it is your turn, please pick a column to drop your red chip.");
+    currentColor = player2Color;
   }
 }
